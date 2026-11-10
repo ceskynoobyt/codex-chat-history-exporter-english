@@ -72,8 +72,8 @@ describe("markdown-renderer", () => {
   it("renders hidden context documents with section labels", () => {
     const markdown = renderHiddenContextDocument(summary, items);
 
-    expect(markdown).toContain("工作区规则上下文");
-    expect(markdown).toContain("项目规则、技能清单、环境上下文与当前工作边界");
+    expect(markdown).toContain("Workspace rules context");
+    expect(markdown).toContain("Project rules, skill lists, environment context and current working boundaries");
   });
 
   it("renders tool trace documents", () => {

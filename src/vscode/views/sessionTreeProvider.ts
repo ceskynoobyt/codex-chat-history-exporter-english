@@ -9,8 +9,8 @@ export class SessionTreeItem extends vscode.TreeItem {
     this.id = session.sessionId;
 
     const markers = [
-      session.parentSessionId ? "子会话" : undefined,
-      session.childSessionCount ? `附 ${session.childSessionCount} 子会话` : undefined,
+      session.parentSessionId ? "Child session" : undefined,
+      session.childSessionCount ? `+${session.childSessionCount} child session(s)` : undefined,
       session.kind,
       (session.updatedAt || session.timestamp).replace("T", " ").replace("Z", "")
     ].filter(Boolean);

@@ -3,60 +3,60 @@
 const SECTION_DEFINITIONS: ExportSectionDefinition[] = [
   {
     id: "transcript",
-    label: "聊天正文与图片",
+    label: "Chat body and images",
     rawFieldNames: ["user_message", "response_item.message", "input_image"],
-    shortDescription: "客户端可见的用户消息、助手回复以及插入在原位的图片。",
+    shortDescription: "User messages and assistant replies visible in the client, plus images inserted in place.",
     longDescription:
-      "用于导出客户端能直接看到的聊天正文、用户图片与助手回复。可以选择附带消息时间戳，也可以按时间区间裁剪正文内容。",
+      "Exports the chat body, user images and assistant replies that the client shows directly. You can include message timestamps or trim the body to a time range.",
     visibility: "visible"
   },
   {
     id: "session_meta",
-    label: "会话基础信息",
+    label: "Basic session info",
     rawFieldNames: ["session_meta"],
-    shortDescription: "会话来源、时间、工作目录、原始文件路径等基础元数据。",
-    longDescription: "用于标识这条会话从哪里来、何时创建、原始日志位于哪个文件中，便于归档、检索和回溯。",
+    shortDescription: "Basic metadata such as session source, time, working directory and original file path.",
+    longDescription: "Identifies where this session came from, when it was created and which file holds the original log, for archiving, searching and tracing.",
     visibility: "hidden"
   },
   {
     id: "system_context",
-    label: "系统运行上下文",
+    label: "System runtime context",
     rawFieldNames: ["permissions instructions", "app-context"],
-    shortDescription: "模型运行时的权限、沙箱、客户端能力和系统级限制。",
+    shortDescription: "Permissions, sandbox, client capabilities and system-level limits at model runtime.",
     longDescription:
-      "解释当时模型具备哪些权限、受到哪些沙箱和客户端能力约束。这部分通常不会直接出现在客户端聊天正文里。",
+      "Explains which permissions the model had and which sandbox and client-capability constraints applied. This part usually does not appear in the client chat body.",
     visibility: "hidden"
   },
   {
     id: "memory_context",
-    label: "Memory 上下文",
+    label: "Memory context",
     rawFieldNames: ["memory", "oai-mem-citation"],
-    shortDescription: "长期偏好、历史任务摘要以及 memory 引用信息。",
-    longDescription: "解释模型为何沿用某些历史偏好、习惯与经验，是后台注入的历史上下文。",
+    shortDescription: "Long-term preferences, past task summaries and memory references.",
+    longDescription: "Explains why the model carried over certain past preferences, habits and experience; this is history context injected in the background.",
     visibility: "hidden"
   },
   {
     id: "workspace_context",
-    label: "工作区规则上下文",
+    label: "Workspace rules context",
     rawFieldNames: ["AGENTS.md", "INSTRUCTIONS", "environment_context"],
-    shortDescription: "项目规则、技能清单、环境上下文与当前工作边界。",
-    longDescription: "解释模型为什么会遵循某些项目内规则、技能约束或环境边界。",
+    shortDescription: "Project rules, skill lists, environment context and current working boundaries.",
+    longDescription: "Explains why the model followed certain in-project rules, skill constraints or environment boundaries.",
     visibility: "hidden"
   },
   {
     id: "collaboration_context",
-    label: "协作控制上下文",
+    label: "Collaboration control context",
     rawFieldNames: ["collaboration_mode", "request_user_input availability"],
-    shortDescription: "当前协作模式、交互边界以及可用输入/工具约束。",
-    longDescription: "解释模型当前处于哪种协作模式，以及哪些交互工具或输入方式可用。",
+    shortDescription: "Current collaboration mode, interaction boundaries and available input/tool constraints.",
+    longDescription: "Explains which collaboration mode the model was in and which interaction tools or input methods were available.",
     visibility: "hidden"
   },
   {
     id: "tool_trace",
-    label: "工具执行轨迹",
+    label: "Tool execution trace",
     rawFieldNames: ["function_call", "function_call_output", "custom_tool_call", "web_search_call"],
-    shortDescription: "模型调用过哪些工具，以及工具参数和输出结果。",
-    longDescription: "用于完整复盘模型的执行过程，可按摘要或完整模式导出。",
+    shortDescription: "Which tools the model called, with their arguments and outputs.",
+    longDescription: "For a complete review of the model's execution; can be exported in summary or full mode.",
     visibility: "partially_hidden"
   }
 ];

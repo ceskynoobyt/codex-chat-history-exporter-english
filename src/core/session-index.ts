@@ -95,7 +95,7 @@ function isMemoryConsolidationSource(source: unknown): boolean {
 export function firstLine(text: string, maxLength = 80): string {
   const trimmed = text.trim();
   const line = trimmed ? trimmed.split(/\r?\n/, 1)[0] ?? "Untitled Session" : "Untitled Session";
-  const normalized = line.replace(/\[Image #\d+\]/g, "（图片）").replace(/\s{2,}/g, " ").trim();
+  const normalized = line.replace(/\[Image #\d+\]/g, "(Image)").replace(/\s{2,}/g, " ").trim();
   return normalized.length <= maxLength ? normalized : `${normalized.slice(0, maxLength - 3)}...`;
 }
 

@@ -59,12 +59,12 @@ function getSessionType(session: SessionSummary): Exclude<SessionTypeFilter, "al
 function getSessionTypeLabel(session: SessionSummary): string {
   const sessionType = getSessionType(session);
   if (sessionType === "internal") {
-    return "内部会话";
+    return "Internal session";
   }
   if (sessionType === "child") {
-    return "子会话";
+    return "Child session";
   }
-  return "主会话";
+  return "Main session";
 }
 
 function renderProfileOptions(profiles: ExportProfile[], selectedProfileId: string): string {
@@ -118,8 +118,8 @@ function renderRelationshipBox(session: SessionSummary, childPreviews: ChildSess
     return `
       <div class="relationship-box relationship-box--internal">
         <div>
-          <div class="relationship-title">内部维护会话</div>
-          <div class="relationship-text">当前没有可靠父链，因此导出时按独立会话文件夹处理。</div>
+          <div class="relationship-title">Internal maintenance session</div>
+          <div class="relationship-text">There is no reliable parent link, so it is exported as a standalone session folder.</div>
         </div>
         <span class="relationship-pill">${escapeHtml(session.internalCategory || "internal")}</span>
       </div>
@@ -130,8 +130,8 @@ function renderRelationshipBox(session: SessionSummary, childPreviews: ChildSess
     return `
       <div class="relationship-box relationship-box--child">
         <div>
-          <div class="relationship-title">子会话父链</div>
-          <div class="relationship-text">父会话 Session ID：${escapeHtml(session.parentSessionId || "unknown")}</div>
+          <div class="relationship-title">Child session parent link</div>
+          <div class="relationship-text">Parent Session ID: ${escapeHtml(session.parentSessionId || "unknown")}</div>
         </div>
         <span class="relationship-pill">subagent</span>
       </div>
@@ -145,10 +145,10 @@ function renderRelationshipBox(session: SessionSummary, childPreviews: ChildSess
   return `
     <div class="relationship-box relationship-box--main">
       <div>
-        <div class="relationship-title">子会话附录</div>
-        <div class="relationship-text">当前主会话挂了 ${escapeHtml(String(childPreviews.length))} 个可验证子会话，可随主会话一起导出。</div>
+        <div class="relationship-title">Child session appendix</div>
+        <div class="relationship-text">This main session has ${escapeHtml(String(childPreviews.length))} verifiable child session(s) that can be exported together with it.</div>
       </div>
-      <button type="button" class="toggle-button" data-child-toggle="${escapeHtml(session.sessionId)}">展开查看子会话</button>
+      <button type="button" class="toggle-button" data-child-toggle="${escapeHtml(session.sessionId)}">Expand to view child sessions</button>
     </div>
   `;
 }
@@ -186,14 +186,14 @@ function renderSessionItems(
             <div class="session-top">
               <div class="session-heading">
                 <div class="session-title">${escapeHtml(session.title || "Untitled Session")}</div>
-                <div class="session-subtitle">首句：${escapeHtml(session.firstMessageAt || session.timestamp || "unknown")} · 末句：${escapeHtml(session.lastMessageAt || session.updatedAt || session.timestamp || "unknown")}</div>
+                <div class="session-subtitle">First: ${escapeHtml(session.firstMessageAt || session.timestamp || "unknown")} · Last: ${escapeHtml(session.lastMessageAt || session.updatedAt || session.timestamp || "unknown")}</div>
               </div>
-              <div class="session-time">更新于 ${escapeHtml(session.updatedAt || session.timestamp)}</div>
+              <div class="session-time">Updated ${escapeHtml(session.updatedAt || session.timestamp)}</div>
             </div>
             <div class="session-tags">
               <span class="tag type-tag type-tag--${escapeHtml(sessionType)}">${escapeHtml(getSessionTypeLabel(session))}</span>
               <span class="tag platform-tag">${escapeHtml(session.kind)}</span>
-              ${childPreviews.length > 0 ? `<span class="tag child-tag">附 ${escapeHtml(String(childPreviews.length))} 个子会话</span>` : ""}
+              ${childPreviews.length > 0 ? `<span class="tag child-tag">+${escapeHtml(String(childPreviews.length))} child session(s)</span>` : ""}
             </div>
             ${renderRelationshipBox(session, childPreviews)}
             <div class="session-meta"><code>${escapeHtml(session.sessionId)}</code><span class="session-cwd">${escapeHtml(session.cwd || "Unknown CWD")}</span></div>
@@ -218,7 +218,7 @@ function countSessionsByType(sessions: SessionSummary[]): Record<Exclude<Session
 
 function renderRecentExports(entries: RecentExportEntry[]): string {
   if (entries.length === 0) {
-    return `<div class="empty-state empty-state--compact">最近还没有导出记录，完成一次导出后会显示在这里。</div>`;
+    return `<div class="empty-state empty-state--compact">No exports yet. Your recent exports will appear here after you finish one.</div>`;
   }
 
   return entries
@@ -227,16 +227,16 @@ function renderRecentExports(entries: RecentExportEntry[]): string {
         <article class="history-card">
           <div class="history-copy">
             <div class="history-title">${escapeHtml(entry.outputDir.split(/[\\/]/).pop() || entry.outputDir)}</div>
-            <p class="history-meta">${escapeHtml(entry.createdAt)} · ${escapeHtml(String(entry.exportedCount))} 条会话</p>
+            <p class="history-meta">${escapeHtml(entry.createdAt)} · ${escapeHtml(String(entry.exportedCount))} session(s)</p>
             <p class="history-path">${escapeHtml(entry.outputDir)}</p>
           </div>
           <div class="history-actions">
             ${
               entry.primaryDocumentPath
-                ? `<button type="button" class="button" data-history-open-document="${escapeHtml(entry.primaryDocumentPath)}">打开 transcript</button>`
+                ? `<button type="button" class="button" data-history-open-document="${escapeHtml(entry.primaryDocumentPath)}">Open transcript</button>`
                 : ""
             }
-            <button type="button" class="button" data-history-open-folder="${escapeHtml(entry.outputDir)}">打开目录</button>
+            <button type="button" class="button" data-history-open-folder="${escapeHtml(entry.outputDir)}">Open folder</button>
           </div>
         </article>
       `
@@ -253,32 +253,32 @@ function renderDesktopShell(input: ExportWizardRenderInput): string {
     <section class="desktop-shell-card">
       <div class="desktop-shell-header">
         <div>
-          <h2 class="desktop-shell-title">桌面版增强</h2>
-          <p class="desktop-shell-copy">这里管理独立 exe 的数据根目录、最近导出历史和快捷入口。</p>
+          <h2 class="desktop-shell-title">Desktop enhancements</h2>
+          <p class="desktop-shell-copy">Manage the standalone exe's data root folder, recent export history and shortcuts here.</p>
         </div>
         ${
           input.appShell.canCreateDesktopShortcut
-            ? `<button type="button" class="button" id="create-shortcut-button">创建桌面快捷方式</button>`
+            ? `<button type="button" class="button" id="create-shortcut-button">Create desktop shortcut</button>`
             : ""
         }
       </div>
       <div class="desktop-shell-grid">
         <section class="settings-card">
           <div class="field-group">
-            <label class="field-label" for="codex-root">Codex 数据目录</label>
+            <label class="field-label" for="codex-root">Codex data folder</label>
             <div class="search-row">
-              <input class="input" id="codex-root" type="text" value="${escapeHtml(input.appShell.codexRoot || "")}" placeholder="选择 .codex 目录" />
-              <button class="button" id="pick-codex-root">浏览</button>
+              <input class="input" id="codex-root" type="text" value="${escapeHtml(input.appShell.codexRoot || "")}" placeholder="Select the .codex folder" />
+              <button class="button" id="pick-codex-root">Browse</button>
               <span></span>
             </div>
-            <p class="field-help">切换后会重新扫描会话列表，不需要重启应用。</p>
+            <p class="field-help">The session list is rescanned after switching; no need to restart the app.</p>
           </div>
         </section>
         <section class="settings-card">
           <div class="desktop-history-header">
             <div>
-              <h3>最近导出历史</h3>
-              <p class="field-help">保留最近几次导出，便于快速回看 transcript 或打开目录。</p>
+              <h3>Recent export history</h3>
+              <p class="field-help">Keeps the last few exports so you can quickly revisit a transcript or open its folder.</p>
             </div>
           </div>
           <div class="history-list" id="recent-export-list">${renderRecentExports(input.appShell.recentExports || [])}</div>
@@ -295,7 +295,7 @@ export function renderExportWizardHtml(input: ExportWizardRenderInput): string {
   const selectedCount = input.uiState.selectedSessionIds.length;
   const stats = countSessionsByType(input.sessions);
   return `<!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -371,35 +371,35 @@ export function renderExportWizardHtml(input: ExportWizardRenderInput): string {
   <body>
     <div class="page">
       <div class="topbar"><span class="dot"></span><span class="dot"></span><span class="dot"></span><div class="brand"><span class="brand-mark">CE</span><span>Codex Chat Exporter</span></div></div>
-      <div class="hero"><h1>会话选择</h1><p>上半区负责找会话和勾选会话；内部会话切到对应类型筛选后可直接导出。</p></div>
+      <div class="hero"><h1>Session selection</h1><p>The upper area is for finding and ticking sessions; switch the type filter to Internal sessions to export them directly.</p></div>
       ${renderDesktopShell(input)}
       <div class="stats">
-        <div class="stat-card"><div class="stat-value">${stats.total}</div><div class="stat-label">总会话</div></div>
-        <div class="stat-card"><div class="stat-value">${stats.internal}</div><div class="stat-label">内部会话</div></div>
-        <div class="stat-card"><div class="stat-value">${stats.child}</div><div class="stat-label">子会话</div></div>
-        <div class="stat-card"><div class="stat-value">${stats.main}</div><div class="stat-label">主会话</div></div>
+        <div class="stat-card"><div class="stat-value">${stats.total}</div><div class="stat-label">Total sessions</div></div>
+        <div class="stat-card"><div class="stat-value">${stats.internal}</div><div class="stat-label">Internal sessions</div></div>
+        <div class="stat-card"><div class="stat-value">${stats.child}</div><div class="stat-label">Child sessions</div></div>
+        <div class="stat-card"><div class="stat-value">${stats.main}</div><div class="stat-label">Main sessions</div></div>
       </div>
       <section class="sessions-card">
-        <div class="search-row"><input class="input" id="session-search" type="text" placeholder="搜索标题、路径或 Session ID" /><button class="button" id="select-all-sessions">全选当前列表</button><button class="button" id="clear-all-sessions">清空选择</button></div>
-        <div class="filter-grid"><select class="select" id="session-type-filter"><option value="main">主会话</option><option value="all">全部会话</option><option value="child">子会话</option><option value="internal">内部会话</option></select><select class="select" id="sort-field"><option value="last">按末句日期排序</option><option value="first">按首句日期排序</option></select><select class="select" id="sort-direction"><option value="desc">新到旧</option><option value="asc">旧到新</option></select></div>
-        <div class="date-grid"><select class="select" id="filter-field"><option value="last">按末句日期筛选</option><option value="first">按首句日期筛选</option></select><input class="datetime" id="filter-start" type="datetime-local" /><input class="datetime" id="filter-end" type="datetime-local" /></div>
-        <div class="toolbar"><div class="toolbar-left"><span class="pill" id="selected-count">已选 ${selectedCount} 条</span><span class="pill" id="visible-count">显示 0 / ${renderedSessions.length}</span></div><p class="muted">子会话默认折叠在主会话里；内部会话不做强行归并，因为本地日志没有可靠父链。</p></div>
-        <div class="session-scroll"><div class="session-list" id="session-list">${renderSessionItems(renderedSessions, input.uiState.selectedSessionIds, input.childPreviewMap)}</div><div class="empty-state" id="empty-state" hidden>当前筛选条件下没有会话。</div></div>
+        <div class="search-row"><input class="input" id="session-search" type="text" placeholder="Search title, path or Session ID" /><button class="button" id="select-all-sessions">Select all in list</button><button class="button" id="clear-all-sessions">Clear selection</button></div>
+        <div class="filter-grid"><select class="select" id="session-type-filter"><option value="main">Main sessions</option><option value="all">All sessions</option><option value="child">Child sessions</option><option value="internal">Internal sessions</option></select><select class="select" id="sort-field"><option value="last">Sort by last-message date</option><option value="first">Sort by first-message date</option></select><select class="select" id="sort-direction"><option value="desc">Newest first</option><option value="asc">Oldest first</option></select></div>
+        <div class="date-grid"><select class="select" id="filter-field"><option value="last">Filter by last-message date</option><option value="first">Filter by first-message date</option></select><input class="datetime" id="filter-start" type="datetime-local" /><input class="datetime" id="filter-end" type="datetime-local" /></div>
+        <div class="toolbar"><div class="toolbar-left"><span class="pill" id="selected-count">${selectedCount} selected</span><span class="pill" id="visible-count">Showing 0 / ${renderedSessions.length}</span></div><p class="muted">Child sessions are collapsed under their main session by default; internal sessions are not force-merged because local logs have no reliable parent link.</p></div>
+        <div class="session-scroll"><div class="session-list" id="session-list">${renderSessionItems(renderedSessions, input.uiState.selectedSessionIds, input.childPreviewMap)}</div><div class="empty-state" id="empty-state" hidden>No sessions match the current filters.</div></div>
       </section>
       <section class="settings">
-        <div class="settings-header"><h2>导出设置</h2><p>这里只控制导出内容、模式和输出目录。</p></div>
+        <div class="settings-header"><h2>Export settings</h2><p>Controls only the export content, profile and output folder.</p></div>
         <div class="settings-grid">
-          <section class="settings-card"><h3>导出内容</h3><p class="field-help">6 类内容独立勾选，标签同时展示原始字段名。</p><div class="section-list" id="section-list">${renderSectionItems(input.sections)}</div></section>
+          <section class="settings-card"><h3>Export content</h3><p class="field-help">The 6 content types are ticked independently; labels also show the original field names.</p><div class="section-list" id="section-list">${renderSectionItems(input.sections)}</div></section>
           <section class="settings-card">
             <div class="config-stack">
-              <div class="field-group"><label class="field-label" for="profile-select">导出模式</label><select class="select" id="profile-select">${renderProfileOptions(input.profiles, input.uiState.selectedProfileId)}</select></div>
-              <div class="field-group"><label class="field-label" for="custom-profile-name">自定义模式名称</label><input class="input" id="custom-profile-name" type="text" placeholder="例如：研究审计版" /><div class="actions-row"><button class="button" id="save-profile-button">新建模式</button><button class="button" id="update-profile-button">覆盖当前</button><button class="button" id="delete-profile-button">删除当前</button></div></div>
-              <div class="field-group"><label class="field-label" for="output-dir">导出目录</label><div class="search-row"><input class="input" id="output-dir" type="text" value="${escapeHtml(input.uiState.outputDir ?? "")}" placeholder="选择导出目录" /><button class="button" id="pick-output-dir">浏览</button><span></span></div></div>
-              <div class="field-group"><label class="field-label">文档拆分</label><div class="split"><select class="select" id="document-mode"><option value="single">单文档</option><option value="multi">按会话文件夹拆分</option></select><select class="select" id="hidden-content-mode"><option value="inline">隐藏内容内联</option><option value="appendix">隐藏内容附录</option><option value="split">隐藏内容独立文档</option></select></div></div>
-              <div class="field-group"><label class="field-label" for="tool-trace-level">工具轨迹粒度</label><select class="select" id="tool-trace-level"><option value="summary">摘要</option><option value="full">完整</option></select></div>
-              <div class="toggle-row"><div><div class="field-label">正文附带时间戳</div><p class="helper">把消息时间写进正文，方便核对特定日期和时间段。</p></div><label class="switch"><input id="include-message-timestamps" type="checkbox" ${input.uiState.includeMessageTimestamps ? "checked" : ""} /><span class="slider"></span></label></div>
-              <div class="toggle-row"><div><div class="field-label">附带子会话附录</div><p class="helper">主会话可把已识别的子会话导出到附录；内部维护会话仍按独立会话处理。</p></div><label class="switch"><input id="include-child-sessions" type="checkbox" /><span class="slider"></span></label></div>
-              <div class="field-group"><label class="field-label">正文时间区间</label><div class="split"><input class="datetime" id="start-time" type="datetime-local" /><input class="datetime" id="end-time" type="datetime-local" /></div><p class="field-help">只裁剪正文和关联轨迹，不会改写原始会话文件。</p></div>
+              <div class="field-group"><label class="field-label" for="profile-select">Export profile</label><select class="select" id="profile-select">${renderProfileOptions(input.profiles, input.uiState.selectedProfileId)}</select></div>
+              <div class="field-group"><label class="field-label" for="custom-profile-name">Custom profile name</label><input class="input" id="custom-profile-name" type="text" placeholder="e.g. Research audit" /><div class="actions-row"><button class="button" id="save-profile-button">New profile</button><button class="button" id="update-profile-button">Overwrite current</button><button class="button" id="delete-profile-button">Delete current</button></div></div>
+              <div class="field-group"><label class="field-label" for="output-dir">Export folder</label><div class="search-row"><input class="input" id="output-dir" type="text" value="${escapeHtml(input.uiState.outputDir ?? "")}" placeholder="Select export folder" /><button class="button" id="pick-output-dir">Browse</button><span></span></div></div>
+              <div class="field-group"><label class="field-label">Document split</label><div class="split"><select class="select" id="document-mode"><option value="single">Single document</option><option value="multi">Split by session folder</option></select><select class="select" id="hidden-content-mode"><option value="inline">Hidden content inline</option><option value="appendix">Hidden content as appendix</option><option value="split">Hidden content as separate document</option></select></div></div>
+              <div class="field-group"><label class="field-label" for="tool-trace-level">Tool trace detail</label><select class="select" id="tool-trace-level"><option value="summary">Summary</option><option value="full">Full</option></select></div>
+              <div class="toggle-row"><div><div class="field-label">Include timestamps in body</div><p class="helper">Writes message times into the body so you can check specific dates and time ranges.</p></div><label class="switch"><input id="include-message-timestamps" type="checkbox" ${input.uiState.includeMessageTimestamps ? "checked" : ""} /><span class="slider"></span></label></div>
+              <div class="toggle-row"><div><div class="field-label">Include child session appendix</div><p class="helper">A main session can export its identified child sessions into an appendix; internal maintenance sessions are still handled as standalone sessions.</p></div><label class="switch"><input id="include-child-sessions" type="checkbox" /><span class="slider"></span></label></div>
+              <div class="field-group"><label class="field-label">Body time range</label><div class="split"><input class="datetime" id="start-time" type="datetime-local" /><input class="datetime" id="end-time" type="datetime-local" /></div><p class="field-help">Only trims the body and related traces; original session files are never modified.</p></div>
             </div>
           </section>
         </div>
@@ -409,21 +409,21 @@ export function renderExportWizardHtml(input: ExportWizardRenderInput): string {
             <div class="progress-shell" id="export-progress-shell" hidden>
               <div class="progress-track"><div class="progress-fill" id="export-progress-fill"></div></div>
               <div class="progress-meta">
-                <span class="progress-label" id="export-progress-label">正在准备导出</span>
+                <span class="progress-label" id="export-progress-label">Preparing export</span>
                 <span class="action-chip" id="export-progress-chip">0%</span>
               </div>
             </div>
-            <p class="action-eyebrow" id="action-eyebrow">准备导出</p>
-            <h3 class="action-title">确认当前选择后再生成导出文件</h3>
+            <p class="action-eyebrow" id="action-eyebrow">Ready to export</p>
+            <h3 class="action-title">Confirm your selection, then generate the export files</h3>
             <div class="action-metrics">
-              <span class="action-chip" id="selection-summary">已选 ${selectedCount} 条会话</span>
-              <span class="action-chip">当前渲染 ${renderedSessions.length} / ${input.sessions.length}</span>
+              <span class="action-chip" id="selection-summary">${selectedCount} session(s) selected</span>
+              <span class="action-chip">Rendered ${renderedSessions.length} / ${input.sessions.length}</span>
             </div>
-            <p class="action-caption">按钮固定放在右侧主操作位，避免落在整条底栏左下角。</p>
+            <p class="action-caption">The button is fixed in the primary action spot on the right, not the bottom-left of the bar.</p>
           </div>
           <div class="export-cta">
-            <button class="primary-button primary-button--export" id="export-button"><span class="button-label" id="export-button-label">生成导出文件</span><span class="button-pulse" aria-hidden="true"></span></button>
-            <p class="action-caption" id="export-caption">导出结果会写入当前选择的导出目录。</p>
+            <button class="primary-button primary-button--export" id="export-button"><span class="button-label" id="export-button-label">Generate export files</span><span class="button-pulse" aria-hidden="true"></span></button>
+            <p class="action-caption" id="export-caption">Results are written to the selected export folder.</p>
           </div>
         </div>
       </section>
@@ -433,17 +433,17 @@ export function renderExportWizardHtml(input: ExportWizardRenderInput): string {
         <div class="success-hero">
           <div class="success-icon">✓</div>
           <div>
-            <h3 class="success-title" id="success-title">导出完成</h3>
-            <p class="success-copy" id="success-copy">本次导出已经写入目标目录，你可以立即打开文件夹检查结果。</p>
+            <h3 class="success-title" id="success-title">Export complete</h3>
+            <p class="success-copy" id="success-copy">The export has been written to the target folder; you can open it now to check the results.</p>
           </div>
-          <button type="button" class="success-close" id="success-close" aria-label="关闭">×</button>
+          <button type="button" class="success-close" id="success-close" aria-label="Close">×</button>
         </div>
         <p class="success-meta" id="success-meta"></p>
         <div class="success-actions">
-          <button type="button" class="button" id="success-open-document-button">打开 transcript</button>
-          <button type="button" class="button" id="success-dismiss-button">继续查看</button>
-          <button type="button" class="button" id="success-rerun-button">重新导出</button>
-          <button type="button" class="primary-button" id="success-open-folder-button">打开文件夹</button>
+          <button type="button" class="button" id="success-open-document-button">Open transcript</button>
+          <button type="button" class="button" id="success-dismiss-button">Keep viewing</button>
+          <button type="button" class="button" id="success-rerun-button">Export again</button>
+          <button type="button" class="primary-button" id="success-open-folder-button">Open folder</button>
         </div>
       </div>
     </div>
@@ -507,40 +507,40 @@ export function renderExportWizardHtml(input: ExportWizardRenderInput): string {
         const normalized=Math.max(0,Math.min(100,Number(percent || 0)));
         progressShell.hidden=normalized <= 0 && !state.exporting;
         progressFill.style.width=normalized + "%";
-        progressLabel.textContent=label || "正在准备导出";
+        progressLabel.textContent=label || "Preparing export";
         progressChip.textContent=Math.round(normalized) + "%";
       }
       function setExporting(exporting,label){
         state.exporting=exporting;
         exportButton.disabled=exporting;
         exportButton.classList.toggle("is-busy",exporting);
-        exportButtonLabel.innerHTML=exporting ? '<span class="button-spinner" aria-hidden="true"></span><span>' + (label || "正在导出...") + '</span>' : "生成导出文件";
-        actionEyebrow.textContent=exporting ? "正在导出" : "准备导出";
-        exportCaption.textContent=exporting ? "正在写入会话与附属文档，请稍候，不需要重复点击。" : "导出结果会写入当前选择的导出目录。";
-        if(!exporting){setProgress(0,"正在准备导出"); progressShell.hidden=true;} else {progressShell.hidden=false;}
+        exportButtonLabel.innerHTML=exporting ? '<span class="button-spinner" aria-hidden="true"></span><span>' + (label || "Exporting...") + '</span>' : "Generate export files";
+        actionEyebrow.textContent=exporting ? "Exporting" : "Ready to export";
+        exportCaption.textContent=exporting ? "Writing sessions and attached documents, please wait; no need to click again." : "Results are written to the selected export folder.";
+        if(!exporting){setProgress(0,"Preparing export"); progressShell.hidden=true;} else {progressShell.hidden=false;}
       }
       function hideSuccessModal(){successModal.hidden=true;}
       function showSuccessModal(payload){
         state.lastExportOutputDir=payload.outputDir || "";
         state.lastExportPrimaryDocumentPath=payload.primaryDocumentPath || "";
-        successCopy.textContent=payload.text || "本次导出已经写入目标目录，你可以立即打开文件夹检查结果。";
-        successMeta.textContent=state.lastExportOutputDir ? "导出目录： " + state.lastExportOutputDir : "";
+        successCopy.textContent=payload.text || "The export has been written to the target folder; you can open it now to check the results.";
+        successMeta.textContent=state.lastExportOutputDir ? "Export folder: " + state.lastExportOutputDir : "";
         successOpenDocumentButton.disabled=!state.lastExportPrimaryDocumentPath;
         successModal.hidden=false;
       }
       function renderRecentExports(entries){
         if(!recentExportList)return;
         if(!entries || entries.length===0){
-          recentExportList.innerHTML='<div class="empty-state empty-state--compact">最近还没有导出记录，完成一次导出后会显示在这里。</div>';
+          recentExportList.innerHTML='<div class="empty-state empty-state--compact">No exports yet. Your recent exports will appear here after you finish one.</div>';
           return;
         }
-        recentExportList.innerHTML=entries.map((entry)=>{const folderName=(entry.outputDir || "").split(/[\\\\/]/).pop() || entry.outputDir; const openDocumentButton=entry.primaryDocumentPath ? '<button type="button" class="button" data-history-open-document="' + escapeClientHtml(entry.primaryDocumentPath) + '">打开 transcript</button>' : ''; return '<article class="history-card"><div class="history-copy"><div class="history-title">' + escapeClientHtml(folderName) + '</div><p class="history-meta">' + escapeClientHtml(entry.createdAt || "") + ' · ' + escapeClientHtml(String(entry.exportedCount || 0)) + ' 条会话</p><p class="history-path">' + escapeClientHtml(entry.outputDir || "") + '</p></div><div class="history-actions">' + openDocumentButton + '<button type="button" class="button" data-history-open-folder="' + escapeClientHtml(entry.outputDir || "") + '">打开目录</button></div></article>';}).join("");
+        recentExportList.innerHTML=entries.map((entry)=>{const folderName=(entry.outputDir || "").split(/[\\\\/]/).pop() || entry.outputDir; const openDocumentButton=entry.primaryDocumentPath ? '<button type="button" class="button" data-history-open-document="' + escapeClientHtml(entry.primaryDocumentPath) + '">Open transcript</button>' : ''; return '<article class="history-card"><div class="history-copy"><div class="history-title">' + escapeClientHtml(folderName) + '</div><p class="history-meta">' + escapeClientHtml(entry.createdAt || "") + ' · ' + escapeClientHtml(String(entry.exportedCount || 0)) + ' session(s)</p><p class="history-path">' + escapeClientHtml(entry.outputDir || "") + '</p></div><div class="history-actions">' + openDocumentButton + '<button type="button" class="button" data-history-open-folder="' + escapeClientHtml(entry.outputDir || "") + '">Open folder</button></div></article>';}).join("");
       }
-      function updateSelectionText(){const countText="已选 " + state.selectedSessionIds.size + " 条"; selectedCountChip.textContent=countText; selectionSummary.textContent=countText + "会话";}
+      function updateSelectionText(){const countText=state.selectedSessionIds.size + " selected"; selectedCountChip.textContent=countText; selectionSummary.textContent=countText + " session(s)";}
       function getSessionTime(session,field){const value=field==="first" ? session.firstMessageAt || session.timestamp || session.updatedAt : session.lastMessageAt || session.updatedAt || session.timestamp; const parsed=Date.parse(value || ""); return Number.isNaN(parsed) ? 0 : parsed;}
       function matchesType(card){const filter=sessionTypeFilterSelect.value; return filter==="all" ? true : card.getAttribute("data-session-type")===filter;}
       function matchesDateRange(card){const field=filterFieldSelect.value==="first" ? "data-first-message-at" : "data-last-message-at"; const value=Date.parse(card.getAttribute(field) || ""); const millis=Number.isNaN(value) ? 0 : value; const start=datetimeLocalToMillis(filterStartInput.value); const end=datetimeLocalToMillis(filterEndInput.value); if(start!==undefined && millis<start)return false; if(end!==undefined && millis>end)return false; return true;}
-      function applySessionView(){const query=(sessionSearchInput.value || "").trim().toLowerCase(); const sortField=sortFieldSelect.value; const direction=sortDirectionSelect.value; const ordered=[...state.sessions].sort((left,right)=>{const delta=getSessionTime(left,sortField)-getSessionTime(right,sortField); return direction==="asc" ? delta : -delta;}); const cards=new Map(Array.from(document.querySelectorAll("[data-session-card]")).map((card)=>[card.getAttribute("data-session-id"),card])); const visible=[]; ordered.forEach((session)=>{const card=cards.get(session.sessionId); if(!card)return; const haystack=(card.getAttribute("data-search-text") || "").toLowerCase(); if((!query || haystack.includes(query)) && matchesType(card) && matchesDateRange(card)){visible.push(card);}}); cards.forEach((card)=>card.setAttribute("hidden","")); visible.forEach((card)=>{card.removeAttribute("hidden"); sessionList.appendChild(card);}); emptyState.hidden=visible.length>0; visibleCountChip.textContent="显示 " + visible.length + " / " + state.sessions.length;}
+      function applySessionView(){const query=(sessionSearchInput.value || "").trim().toLowerCase(); const sortField=sortFieldSelect.value; const direction=sortDirectionSelect.value; const ordered=[...state.sessions].sort((left,right)=>{const delta=getSessionTime(left,sortField)-getSessionTime(right,sortField); return direction==="asc" ? delta : -delta;}); const cards=new Map(Array.from(document.querySelectorAll("[data-session-card]")).map((card)=>[card.getAttribute("data-session-id"),card])); const visible=[]; ordered.forEach((session)=>{const card=cards.get(session.sessionId); if(!card)return; const haystack=(card.getAttribute("data-search-text") || "").toLowerCase(); if((!query || haystack.includes(query)) && matchesType(card) && matchesDateRange(card)){visible.push(card);}}); cards.forEach((card)=>card.setAttribute("hidden","")); visible.forEach((card)=>{card.removeAttribute("hidden"); sessionList.appendChild(card);}); emptyState.hidden=visible.length>0; visibleCountChip.textContent="Showing " + visible.length + " / " + state.sessions.length;}
       function applyProfile(profileId){const profile=getProfile(profileId); if(!profile)return; state.selectedProfileId=profile.id; profileSelect.value=profile.id; documentModeSelect.value=profile.documentMode; hiddenContentModeSelect.value=profile.hiddenContentMode; toolTraceLevelSelect.value=profile.toolTraceLevel; includeMessageTimestampsCheckbox.checked=profile.includeMessageTimestamps; includeChildSessionsCheckbox.checked=profile.includeChildSessionsAsAppendix; startTimeInput.value=isoToDatetimeLocal(profile.transcriptTimeFilter && profile.transcriptTimeFilter.start); endTimeInput.value=isoToDatetimeLocal(profile.transcriptTimeFilter && profile.transcriptTimeFilter.end); document.querySelectorAll("[data-section-id]").forEach((checkbox)=>{checkbox.checked=profile.includedSections.includes(checkbox.getAttribute("data-section-id"));});}
       function collectIncludedSections(){return Array.from(document.querySelectorAll("[data-section-id]")).filter((checkbox)=>checkbox.checked).map((checkbox)=>checkbox.getAttribute("data-section-id"));}
       function buildPayload(includeProfileName,customProfileName){return {selectedProfileId:state.selectedProfileId,selectedSessionIds:Array.from(state.selectedSessionIds),outputDir:outputDirInput.value.trim(),codexRoot:codexRootInput ? codexRootInput.value.trim() : undefined,documentMode:documentModeSelect.value,hiddenContentMode:hiddenContentModeSelect.value,toolTraceLevel:toolTraceLevelSelect.value,includeMessageTimestamps:includeMessageTimestampsCheckbox.checked,includeChildSessionsAsAppendix:includeChildSessionsCheckbox.checked,includedSections:collectIncludedSections(),start:datetimeLocalToIso(startTimeInput.value),end:datetimeLocalToIso(endTimeInput.value),customProfileName:includeProfileName ? customProfileName : undefined};}
@@ -551,7 +551,7 @@ export function renderExportWizardHtml(input: ExportWizardRenderInput): string {
       document.getElementById("select-all-sessions").addEventListener("click",()=>{document.querySelectorAll("[data-session-card]").forEach((card)=>{if(card.hasAttribute("hidden"))return; const checkbox=card.querySelector(".session-checkbox"); if(!checkbox)return; checkbox.checked=true; state.selectedSessionIds.add(checkbox.getAttribute("data-session-id"));}); updateSelectionText();});
       document.getElementById("clear-all-sessions").addEventListener("click",()=>{state.selectedSessionIds.clear(); document.querySelectorAll(".session-checkbox").forEach((checkbox)=>{checkbox.checked=false;}); updateSelectionText();});
       sessionList.addEventListener("change",(event)=>{const target=event.target; if(!(target instanceof HTMLInputElement) || !target.classList.contains("session-checkbox"))return; const sessionId=target.getAttribute("data-session-id"); if(!sessionId)return; if(target.checked){state.selectedSessionIds.add(sessionId);}else{state.selectedSessionIds.delete(sessionId);} updateSelectionText();});
-      sessionList.addEventListener("click",(event)=>{const target=event.target; if(!(target instanceof HTMLElement))return; const button=target.closest("[data-child-toggle]"); if(button){const sessionId=button.getAttribute("data-child-toggle"); const panel=document.querySelector('[data-child-panel="' + sessionId + '"]'); if(!panel)return; const hidden=panel.hasAttribute("hidden"); if(hidden){panel.removeAttribute("hidden"); button.textContent="收起子会话";}else{panel.setAttribute("hidden",""); button.textContent="展开查看子会话";} return;} const openFolder=target.closest("[data-history-open-folder]"); if(openFolder){vscode.postMessage({type:"openExportFolder",payload:{outputDir:openFolder.getAttribute("data-history-open-folder")}}); return;} const openDocument=target.closest("[data-history-open-document]"); if(openDocument){vscode.postMessage({type:"openExportDocument",payload:{path:openDocument.getAttribute("data-history-open-document")}});}});
+      sessionList.addEventListener("click",(event)=>{const target=event.target; if(!(target instanceof HTMLElement))return; const button=target.closest("[data-child-toggle]"); if(button){const sessionId=button.getAttribute("data-child-toggle"); const panel=document.querySelector('[data-child-panel="' + sessionId + '"]'); if(!panel)return; const hidden=panel.hasAttribute("hidden"); if(hidden){panel.removeAttribute("hidden"); button.textContent="Collapse child sessions";}else{panel.setAttribute("hidden",""); button.textContent="Expand to view child sessions";} return;} const openFolder=target.closest("[data-history-open-folder]"); if(openFolder){vscode.postMessage({type:"openExportFolder",payload:{outputDir:openFolder.getAttribute("data-history-open-folder")}}); return;} const openDocument=target.closest("[data-history-open-document]"); if(openDocument){vscode.postMessage({type:"openExportDocument",payload:{path:openDocument.getAttribute("data-history-open-document")}});}});
       sessionSearchInput.addEventListener("input",applySessionView); sessionTypeFilterSelect.addEventListener("change",applySessionView); sortFieldSelect.addEventListener("change",applySessionView); sortDirectionSelect.addEventListener("change",applySessionView); filterFieldSelect.addEventListener("change",applySessionView); filterStartInput.addEventListener("change",applySessionView); filterEndInput.addEventListener("change",applySessionView);
       document.getElementById("save-profile-button").addEventListener("click",()=>{vscode.postMessage({type:"saveProfile",payload:buildPayload(true,customProfileNameInput.value.trim())});});
       document.getElementById("update-profile-button").addEventListener("click",()=>{const fallbackName=profileSelect.options[profileSelect.selectedIndex] && profileSelect.options[profileSelect.selectedIndex].textContent ? profileSelect.options[profileSelect.selectedIndex].textContent : ""; vscode.postMessage({type:"updateProfile",payload:buildPayload(true,customProfileNameInput.value.trim() || fallbackName)});});
@@ -559,9 +559,9 @@ export function renderExportWizardHtml(input: ExportWizardRenderInput): string {
       exportButton.addEventListener("click",()=>{
         if(state.exporting)return;
         hideSuccessModal();
-        setExporting(true,"正在校验...");
-        setStatus("正在准备导出，请稍候。","progress");
-        setProgress(4,"正在校验导出参数");
+        setExporting(true,"Validating...");
+        setStatus("Preparing export, please wait.","progress");
+        setProgress(4,"Validating export parameters");
         vscode.postMessage({type:"export",payload:buildPayload(false)});
       });
       successClose.addEventListener("click",hideSuccessModal);
@@ -572,15 +572,15 @@ export function renderExportWizardHtml(input: ExportWizardRenderInput): string {
       successOpenDocumentButton.addEventListener("click",()=>{if(!state.lastExportPrimaryDocumentPath)return; vscode.postMessage({type:"openExportDocument",payload:{path:state.lastExportPrimaryDocumentPath}});});
       window.addEventListener("message",(event)=>{
         const message=event.data;
-        if(message.type==="outputDirSelected"){outputDirInput.value=message.payload.outputDir || ""; setStatus("已选择导出目录。","idle");}
-        if(message.type==="codexRootSelected" && codexRootInput){codexRootInput.value=message.payload.codexRoot || ""; state.codexRoot=message.payload.codexRoot || ""; setStatus("已切换 Codex 数据目录，正在刷新会话列表。","success");}
+        if(message.type==="outputDirSelected"){outputDirInput.value=message.payload.outputDir || ""; setStatus("Export folder selected.","idle");}
+        if(message.type==="codexRootSelected" && codexRootInput){codexRootInput.value=message.payload.codexRoot || ""; state.codexRoot=message.payload.codexRoot || ""; setStatus("Codex data folder changed; refreshing the session list.","success");}
         if(message.type==="profilesUpdated"){state.profiles=message.payload.profiles; profileSelect.innerHTML=state.profiles.map((profile)=>'<option value="' + profile.id + '">' + profile.name + '</option>').join(""); profileSelect.value=message.payload.selectedProfileId; applyProfile(message.payload.selectedProfileId);}
         if(message.type==="recentExportsUpdated"){state.recentExports=Array.isArray(message.payload.recentExports) ? message.payload.recentExports : []; renderRecentExports(state.recentExports);}
         if(message.type==="status"){setStatus(message.payload.text || "",message.payload.tone || "idle");}
-        if(message.type==="exportStarted"){hideSuccessModal(); setExporting(true,message.payload.label || "正在导出..."); setStatus(message.payload.text || "正在导出，请稍候。","progress"); setProgress(Number(message.payload.percent || 8),message.payload.text || "正在导出，请稍候。");}
-        if(message.type==="exportProgress"){setStatus(message.payload.text || "", "progress"); setProgress(Number(message.payload.percent || 0),message.payload.text || "正在导出");}
-        if(message.type==="exportFinished"){setExporting(false); setStatus(message.payload.text || "导出完成。","success"); setProgress(100,message.payload.text || "导出完成"); showSuccessModal(message.payload || {}); if(Array.isArray(message.payload.recentExports)){state.recentExports=message.payload.recentExports; renderRecentExports(state.recentExports);}}
-        if(message.type==="exportFailed"){setExporting(false); setStatus(message.payload.text || "导出失败。","error"); setProgress(0,message.payload.text || "导出失败");}
+        if(message.type==="exportStarted"){hideSuccessModal(); setExporting(true,message.payload.label || "Exporting..."); setStatus(message.payload.text || "Exporting, please wait.","progress"); setProgress(Number(message.payload.percent || 8),message.payload.text || "Exporting, please wait.");}
+        if(message.type==="exportProgress"){setStatus(message.payload.text || "", "progress"); setProgress(Number(message.payload.percent || 0),message.payload.text || "Exporting");}
+        if(message.type==="exportFinished"){setExporting(false); setStatus(message.payload.text || "Export complete.","success"); setProgress(100,message.payload.text || "Export complete"); showSuccessModal(message.payload || {}); if(Array.isArray(message.payload.recentExports)){state.recentExports=message.payload.recentExports; renderRecentExports(state.recentExports);}}
+        if(message.type==="exportFailed"){setExporting(false); setStatus(message.payload.text || "Export failed.","error"); setProgress(0,message.payload.text || "Export failed");}
       });
       if(state.start)startTimeInput.value=isoToDatetimeLocal(state.start); if(state.end)endTimeInput.value=isoToDatetimeLocal(state.end); if(codexRootInput)codexRootInput.value=state.codexRoot; sessionTypeFilterSelect.value="main"; applyProfile(state.selectedProfileId); updateSelectionText(); renderRecentExports(state.recentExports); setExporting(false); applySessionView();
     </script>

@@ -86,31 +86,31 @@ describe("exportWizard", () => {
     });
 
     expect(html).toContain("Codex Chat Exporter");
-    expect(html).toContain("会话选择");
-    expect(html).toContain("导出设置");
-    expect(html).toContain("总会话");
-    expect(html).toContain("内部会话");
-    expect(html).toContain("子会话");
-    expect(html).toContain("主会话");
+    expect(html).toContain("Session selection");
+    expect(html).toContain("Export settings");
+    expect(html).toContain("Total sessions");
+    expect(html).toContain("Internal sessions");
+    expect(html).toContain("Child session");
+    expect(html).toContain("Main sessions");
     expect(html).toContain("session-type-filter");
-    expect(html).toContain("附 2 个子会话");
-    expect(html).toContain("子会话");
-    expect(html).toContain("内部维护会话");
-    expect(html).toContain("准备导出");
-    expect(html).toContain("确认当前选择后再生成导出文件");
-    expect(html).toContain("附带子会话附录");
-    expect(html).toContain("展开查看子会话");
-    expect(html).toContain("按末句日期排序");
-    expect(html).toContain("按首句日期排序");
-    expect(html).toContain("按末句日期筛选");
-    expect(html).toContain("首句：2026-03-24T10:00:00Z");
-    expect(html).toContain("末句：2026-03-24T10:10:00Z");
+    expect(html).toContain("+2 child session(s)");
+    expect(html).toContain("Child session");
+    expect(html).toContain("Internal maintenance session");
+    expect(html).toContain("Ready to export");
+    expect(html).toContain("Confirm your selection, then generate the export files");
+    expect(html).toContain("Include child session appendix");
+    expect(html).toContain("Expand to view child sessions");
+    expect(html).toContain("Sort by last-message date");
+    expect(html).toContain("Sort by first-message date");
+    expect(html).toContain("Filter by last-message date");
+    expect(html).toContain("First: 2026-03-24T10:00:00Z");
+    expect(html).toContain("Last: 2026-03-24T10:10:00Z");
     expect(html).toContain("Child Session");
     expect(html).toContain("session_meta");
-    expect(html).toContain("生成导出文件");
+    expect(html).toContain("Generate export files");
     expect(html).toContain("success-modal");
     expect(html).toContain("export-button-label");
-    expect(html).toContain("打开文件夹");
+    expect(html).toContain("Open folder");
   });
 
   it("embeds initial JSON payload for client-side interactivity", () => {
@@ -163,10 +163,10 @@ describe("exportWizard", () => {
       }
     });
 
-    expect(html).toContain("桌面版增强");
-    expect(html).toContain("Codex 数据目录");
-    expect(html).toContain("创建桌面快捷方式");
-    expect(html).toContain("最近导出历史");
-    expect(html).toContain("打开 transcript");
+    expect(html).toContain("Desktop enhancements");
+    expect(html).toContain("Codex data folder");
+    expect(html).toContain("Create desktop shortcut");
+    expect(html).toContain("Recent export history");
+    expect(html).toContain("Open transcript");
   });
 });

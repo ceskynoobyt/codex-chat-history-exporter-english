@@ -26,7 +26,7 @@ describe("section-groups", () => {
     const transcript = getSectionDefinition("transcript");
     const toolTrace = getSectionDefinition("tool_trace");
 
-    expect(transcript.label).toContain("聊天正文与图片");
+    expect(transcript.label).toContain("Chat body and images");
     expect(transcript.rawFieldNames).toContain("user_message");
     expect(toolTrace.rawFieldNames).toContain("function_call");
   });
