@@ -286,6 +286,6 @@ describe("session-index", () => {
     const sessions = await scanSessions(codexRoot);
 
     expect(sessions).toHaveLength(1);
-    expect(sessions[0]?.title).toBe("修复这个 （图片） 警告");
+    expect(sessions[0]?.title).toBe("修复这个 (Image) 警告");
   });
 });

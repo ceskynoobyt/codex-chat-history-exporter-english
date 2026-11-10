@@ -86,7 +86,7 @@ export async function openExportWizard(
         canSelectFiles: false,
         canSelectFolders: true,
         canSelectMany: false,
-        openLabel: "选择导出目录"
+        openLabel: "Select export folder"
       });
 
       if (!pickedFolder?.[0]) {
@@ -132,7 +132,7 @@ export async function openExportWizard(
       if (!selectedProfile || selectedProfile.builtin) {
         await panel.webview.postMessage({
           type: "status",
-          payload: { text: "内置模式不能删除。" }
+          payload: { text: "Built-in profiles cannot be deleted." }
         });
         return;
       }
@@ -142,7 +142,7 @@ export async function openExportWizard(
       await postProfilesUpdated(panel, profileStore, "reading");
       await panel.webview.postMessage({
         type: "status",
-        payload: { text: `已删除自定义模式：${selectedProfile.name}` }
+        payload: { text: `Custom profile deleted: ${selectedProfile.name}` }
       });
       return;
     }
@@ -152,12 +152,12 @@ export async function openExportWizard(
     if (!validation.valid) {
       await panel.webview.postMessage({
         type: "status",
-        payload: { text: validation.errors.join("；") }
+        payload: { text: validation.errors.join("; ") }
       });
       if (message.type === "export") {
         await panel.webview.postMessage({
           type: "exportFailed",
-          payload: { text: validation.errors.join("；") }
+          payload: { text: validation.errors.join("; ") }
         });
       }
       return;
@@ -178,7 +178,7 @@ export async function openExportWizard(
       if (!name) {
         await panel.webview.postMessage({
           type: "status",
-          payload: { text: "请输入自定义模式名称后再保存。" }
+          payload: { text: "Enter a custom profile name before saving." }
         });
         return;
       }
@@ -187,7 +187,7 @@ export async function openExportWizard(
         ...transientProfile,
         id: `${slugify(name)}-${Date.now()}`,
         name,
-        description: `由导出向导保存的自定义模式：${name}`,
+        description: `Custom profile saved by the export wizard: ${name}`,
         builtin: false
       };
       await profileStore.saveProfile(customProfile);
@@ -195,7 +195,7 @@ export async function openExportWizard(
       await postProfilesUpdated(panel, profileStore, customProfile.id);
       await panel.webview.postMessage({
         type: "status",
-        payload: { text: `已保存自定义模式：${name}` }
+        payload: { text: `Custom profile saved: ${name}` }
       });
       return;
     }
@@ -205,7 +205,7 @@ export async function openExportWizard(
       if (!selectedProfile || selectedProfile.builtin) {
         await panel.webview.postMessage({
           type: "status",
-          payload: { text: "只有自定义模式可以更新。" }
+          payload: { text: "Only custom profiles can be updated." }
         });
         return;
       }
@@ -214,14 +214,14 @@ export async function openExportWizard(
         ...transientProfile,
         id: selectedProfile.id,
         name: payload.customProfileName?.trim() || selectedProfile.name,
-        description: selectedProfile.description || `由导出向导更新的自定义模式：${selectedProfile.name}`,
+        description: selectedProfile.description || `Custom profile updated by the export wizard: ${selectedProfile.name}`,
         builtin: false
       };
       await profileStore.saveProfile(updatedProfile);
       await postProfilesUpdated(panel, profileStore, updatedProfile.id);
       await panel.webview.postMessage({
         type: "status",
-        payload: { text: `已更新自定义模式：${updatedProfile.name}` }
+        payload: { text: `Custom profile updated: ${updatedProfile.name}` }
       });
       return;
     }
@@ -233,11 +233,11 @@ export async function openExportWizard(
     if (!payload.outputDir?.trim()) {
       await panel.webview.postMessage({
         type: "status",
-        payload: { text: "请先选择导出目录。" }
+        payload: { text: "Select an export folder first." }
       });
       await panel.webview.postMessage({
         type: "exportFailed",
-        payload: { text: "请先选择导出目录。" }
+        payload: { text: "Select an export folder first." }
       });
       return;
     }
@@ -245,11 +245,11 @@ export async function openExportWizard(
     if (payload.selectedSessionIds.length === 0) {
       await panel.webview.postMessage({
         type: "status",
-        payload: { text: "请至少勾选一条会话再导出。" }
+        payload: { text: "Select at least one session before exporting." }
       });
       await panel.webview.postMessage({
         type: "exportFailed",
-        payload: { text: "请至少勾选一条会话再导出。" }
+        payload: { text: "Select at least one session before exporting." }
       });
       return;
     }
@@ -261,11 +261,11 @@ export async function openExportWizard(
     if (selectedSessions.length === 0) {
       await panel.webview.postMessage({
         type: "status",
-        payload: { text: "未找到已勾选的会话。" }
+        payload: { text: "The selected sessions were not found." }
       });
       await panel.webview.postMessage({
         type: "exportFailed",
-        payload: { text: "未找到已勾选的会话。" }
+        payload: { text: "The selected sessions were not found." }
       });
       return;
     }
@@ -274,8 +274,8 @@ export async function openExportWizard(
     await panel.webview.postMessage({
       type: "exportStarted",
       payload: {
-        text: `正在导出 ${selectedSessions.length} 条会话，请稍候。`,
-        label: "正在导出..."
+        text: `Exporting ${selectedSessions.length} session(s), please wait.`,
+        label: "Exporting..."
       }
     });
 
@@ -283,7 +283,7 @@ export async function openExportWizard(
       await vscode.window.withProgress(
         {
           location: vscode.ProgressLocation.Notification,
-          title: "正在导出 Codex 会话",
+          title: "Exporting Codex sessions",
           cancellable: false
         },
         async (progress) => {
@@ -303,12 +303,12 @@ export async function openExportWizard(
 
             await panel.webview.postMessage({
               type: "status",
-              payload: { text: `已导出 ${completed} / ${selectedSessions.length} 条会话。`, tone: "progress" }
+              payload: { text: `Exported ${completed} / ${selectedSessions.length} session(s).`, tone: "progress" }
             });
             await panel.webview.postMessage({
               type: "exportProgress",
               payload: {
-                text: `已导出 ${completed} / ${selectedSessions.length} 条会话。`,
+                text: `Exported ${completed} / ${selectedSessions.length} session(s).`,
                 percent: Math.round((completed / selectedSessions.length) * 100)
               }
             });
@@ -324,7 +324,7 @@ export async function openExportWizard(
       await panel.webview.postMessage({
         type: "exportFinished",
         payload: {
-          text: `已导出 ${selectedSessions.length} 条会话到 ${payload.outputDir}`,
+          text: `Exported ${selectedSessions.length} session(s) to ${payload.outputDir}`,
           outputDir: payload.outputDir,
           exportedCount: selectedSessions.length,
           primaryDocumentPath

@@ -11,8 +11,8 @@ export interface ProfileValidationResult {
 const BUILTIN_PROFILES: ExportProfile[] = [
   {
     id: "reading",
-    name: "阅读版",
-    description: "只导出聊天正文与图片，适合整理与回看。",
+    name: "Reading",
+    description: "Exports only the chat body and images; good for tidying up and reviewing.",
     includedSections: ["transcript"],
     documentMode: "single",
     hiddenContentMode: "appendix",
@@ -24,8 +24,8 @@ const BUILTIN_PROFILES: ExportProfile[] = [
   },
   {
     id: "audit",
-    name: "审计版",
-    description: "导出正文、工具轨迹和会话基础信息，适合复盘执行过程。",
+    name: "Audit",
+    description: "Exports the body, tool traces and basic session info; good for reviewing the execution process.",
     includedSections: ["transcript", "tool_trace", "session_meta"],
     documentMode: "single",
     hiddenContentMode: "appendix",
@@ -37,8 +37,8 @@ const BUILTIN_PROFILES: ExportProfile[] = [
   },
   {
     id: "forensics",
-    name: "取证版",
-    description: "导出正文、隐藏上下文、工具轨迹和可验证子会话，适合完整留档与排障。",
+    name: "Forensic",
+    description: "Exports the body, hidden context, tool traces and verifiable child sessions; good for full archiving and troubleshooting.",
     includedSections: [
       "transcript",
       "session_meta",

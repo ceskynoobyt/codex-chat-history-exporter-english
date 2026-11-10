@@ -100,7 +100,7 @@ async function createDesktopShortcut(): Promise<string> {
     iconIndex: 0
   });
   if (!created) {
-    throw new Error("创建桌面快捷方式失败。");
+    throw new Error("Failed to create the desktop shortcut.");
   }
   return shortcutPath;
 }
@@ -153,7 +153,7 @@ async function handleRendererMessage(
   if (message.type === "pickOutputDir") {
     const pickedFolder = await dialog.showOpenDialog(window, {
       properties: ["openDirectory", "createDirectory"],
-      buttonLabel: "选择导出目录"
+      buttonLabel: "Select export folder"
     });
 
     if (!pickedFolder.filePaths[0]) {
@@ -175,7 +175,7 @@ async function handleRendererMessage(
   if (message.type === "pickCodexRoot") {
     const pickedFolder = await dialog.showOpenDialog(window, {
       properties: ["openDirectory"],
-      buttonLabel: "选择 Codex 数据目录"
+      buttonLabel: "Select Codex data folder"
     });
 
     if (!pickedFolder.filePaths[0]) {
@@ -195,7 +195,7 @@ async function handleRendererMessage(
     const shortcutPath = await createDesktopShortcut();
     sendToRenderer(window, {
       type: "status",
-      payload: { text: `已创建桌面快捷方式：${basename(shortcutPath)}`, tone: "success" }
+      payload: { text: `Desktop shortcut created: ${basename(shortcutPath)}`, tone: "success" }
     });
     return;
   }
@@ -228,7 +228,7 @@ async function handleRendererMessage(
   if (message.type === "deleteProfile") {
     const selectedProfile = await profileStore.getProfile(payload.selectedProfileId);
     if (!selectedProfile || selectedProfile.builtin) {
-      sendToRenderer(window, { type: "status", payload: { text: "内置模式不能删除。" } });
+      sendToRenderer(window, { type: "status", payload: { text: "Built-in profiles cannot be deleted." } });
       return;
     }
 
@@ -237,7 +237,7 @@ async function handleRendererMessage(
     await postProfilesUpdated(window, "reading");
     sendToRenderer(window, {
       type: "status",
-      payload: { text: `已删除自定义模式：${selectedProfile.name}` }
+      payload: { text: `Custom profile deleted: ${selectedProfile.name}` }
     });
     return;
   }
@@ -245,7 +245,7 @@ async function handleRendererMessage(
   const transientProfile = buildProfileFromWizardPayload(payload, sourceProfile);
   const validation = validateProfile(transientProfile);
   if (!validation.valid) {
-    const text = validation.errors.join("；");
+    const text = validation.errors.join("; ");
     sendToRenderer(window, { type: "status", payload: { text, tone: "error" } });
     if (message.type === "export") {
       sendToRenderer(window, { type: "exportFailed", payload: { text } });
@@ -266,7 +266,7 @@ async function handleRendererMessage(
   if (message.type === "saveProfile") {
     const name = payload.customProfileName?.trim();
     if (!name) {
-      sendToRenderer(window, { type: "status", payload: { text: "请输入自定义模式名称后再保存。", tone: "error" } });
+      sendToRenderer(window, { type: "status", payload: { text: "Enter a custom profile name before saving.", tone: "error" } });
       return;
     }
 
@@ -274,20 +274,20 @@ async function handleRendererMessage(
       ...transientProfile,
       id: `${name.trim().toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || "custom"}-${Date.now()}`,
       name,
-      description: `由桌面导出器保存的自定义模式：${name}`,
+      description: `Custom profile saved by the desktop exporter: ${name}`,
       builtin: false
     };
     await profileStore.saveProfile(customProfile);
     await uiStateStore.updateState({ selectedProfileId: customProfile.id });
     await postProfilesUpdated(window, customProfile.id);
-    sendToRenderer(window, { type: "status", payload: { text: `已保存自定义模式：${name}`, tone: "success" } });
+    sendToRenderer(window, { type: "status", payload: { text: `Custom profile saved: ${name}`, tone: "success" } });
     return;
   }
 
   if (message.type === "updateProfile") {
     const selectedProfile = await profileStore.getProfile(payload.selectedProfileId);
     if (!selectedProfile || selectedProfile.builtin) {
-      sendToRenderer(window, { type: "status", payload: { text: "只有自定义模式可以更新。", tone: "error" } });
+      sendToRenderer(window, { type: "status", payload: { text: "Only custom profiles can be updated.", tone: "error" } });
       return;
     }
 
@@ -295,12 +295,12 @@ async function handleRendererMessage(
       ...transientProfile,
       id: selectedProfile.id,
       name: payload.customProfileName?.trim() || selectedProfile.name,
-      description: selectedProfile.description || `由桌面导出器更新的自定义模式：${selectedProfile.name}`,
+      description: selectedProfile.description || `Custom profile updated by the desktop exporter: ${selectedProfile.name}`,
       builtin: false
     };
     await profileStore.saveProfile(updatedProfile);
     await postProfilesUpdated(window, updatedProfile.id);
-    sendToRenderer(window, { type: "status", payload: { text: `已更新自定义模式：${updatedProfile.name}`, tone: "success" } });
+    sendToRenderer(window, { type: "status", payload: { text: `Custom profile updated: ${updatedProfile.name}`, tone: "success" } });
     return;
   }
 
@@ -309,14 +309,14 @@ async function handleRendererMessage(
   }
 
   if (!payload.outputDir?.trim()) {
-    const text = "请先选择导出目录。";
+    const text = "Select an export folder first.";
     sendToRenderer(window, { type: "status", payload: { text, tone: "error" } });
     sendToRenderer(window, { type: "exportFailed", payload: { text } });
     return;
   }
 
   if (payload.selectedSessionIds.length === 0) {
-    const text = "请至少勾选一条会话再导出。";
+    const text = "Select at least one session before exporting.";
     sendToRenderer(window, { type: "status", payload: { text, tone: "error" } });
     sendToRenderer(window, { type: "exportFailed", payload: { text } });
     return;
@@ -327,7 +327,7 @@ async function handleRendererMessage(
   const selectedSessions = allSessions.filter((session) => payload.selectedSessionIds.includes(session.sessionId));
 
   if (selectedSessions.length === 0) {
-    const text = "未找到已勾选的会话。";
+    const text = "The selected sessions were not found.";
     sendToRenderer(window, { type: "status", payload: { text, tone: "error" } });
     sendToRenderer(window, { type: "exportFailed", payload: { text } });
     return;
@@ -337,8 +337,8 @@ async function handleRendererMessage(
   sendToRenderer(window, {
     type: "exportStarted",
     payload: {
-      text: `正在导出 ${selectedSessions.length} 条会话，请稍候。`,
-      label: "正在导出...",
+      text: `Exporting ${selectedSessions.length} session(s), please wait.`,
+      label: "Exporting...",
       percent: 8
     }
   });
@@ -354,12 +354,12 @@ async function handleRendererMessage(
       completed += 1;
       sendToRenderer(window, {
         type: "status",
-        payload: { text: `已导出 ${completed} / ${selectedSessions.length} 条会话。`, tone: "progress" }
+        payload: { text: `Exported ${completed} / ${selectedSessions.length} session(s).`, tone: "progress" }
       });
       sendToRenderer(window, {
         type: "exportProgress",
         payload: {
-          text: `已导出 ${completed} / ${selectedSessions.length} 条会话。`,
+          text: `Exported ${completed} / ${selectedSessions.length} session(s).`,
           percent: Math.round((completed / selectedSessions.length) * 100)
         }
       });
@@ -375,7 +375,7 @@ async function handleRendererMessage(
     sendToRenderer(window, {
       type: "exportFinished",
       payload: {
-        text: `已导出 ${selectedSessions.length} 条会话到 ${payload.outputDir}`,
+        text: `Exported ${selectedSessions.length} session(s) to ${payload.outputDir}`,
         outputDir: payload.outputDir,
         exportedCount: selectedSessions.length,
         primaryDocumentPath,
